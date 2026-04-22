@@ -1,16 +1,6 @@
-Name: Catherine Namusisi
-Student ID:
-Date: April 21,2026
+import sqlite3
 
-commands run:
-1. git clone https://github.com/cathynamusisi256/nyondo-sql
-2. cd nyondo-sql-lab
-3. touch ansers.txt
-4. mkdir screenshots
-
-TASK 1: Build the Nyondo stock database
-
-description: created setup.py to initialize the nyondo_stock.db with products and user tables.
+conn = sqlite3.connect('nyondo_stock.db')
 
 # Create tables
 conn.execute('''
