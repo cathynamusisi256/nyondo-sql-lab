@@ -1,39 +1,34 @@
 import sqlite3
 
-def search_product_secure(name):
-    conn = sqlite3.connect('nyondo_stock.db')
-    # FIX: Use '?' placeholder instead of f-strings
-    query = "SELECT * FROM products WHERE name LIKE ?"
-    params = (f'%{name}%',)
+def login_safe(username, password):
+    # 1. VALIDATION RULES
+    # Rule: No spaces in username
+    if " " in username:
+        return "Rejected: Username cannot contain spaces"
     
-    print(f"Executing secure query for: {name}")
-    rows = conn.execute(query, params).fetchall()
-    conn.close()
-    return rows
+    # Rule: Password must be at least 6 characters
+    if len(password) < 6:
+        return "Rejected: Password too short"
 
-def login_secure(username, password):
+    # 2. DATABASE LOGIC (Only runs if validation passes)
     conn = sqlite3.connect('nyondo_stock.db')
-    # FIX: Use '?' placeholders for both username and password
     query = "SELECT * FROM users WHERE username = ? AND password = ?"
-    params = (username, password)
-    
-    print(f"Executing secure login for: {username}")
-    user = conn.execute(query, params).fetchone()
+    user = conn.execute(query, (username, password)).fetchone()
     conn.close()
-    return user
+    
+    if user:
+        return f"Success: Welcome {username}"
+    else:
+        return "Failed: Invalid credentials"
 
-# --- TESTING THE SAME ATTACKS FROM TASK 3 ---
+# --- TASK 5 TEST CASES ---
+print("--- Testing Task 5 Validation ---")
 
-print("\n--- Testing Login Bypass Attack ---")
-hacker_user = login_secure("admin'--", "wrong_password")
-if hacker_user:
-    print(f"Result: Success! Logged in as: {hacker_user}")
-else:
-    print("Result: Failed! The system is now secure.")
+# Test 1: Valid Login
+print(f"Test 1 (Valid): {login_safe('admin', 'admin123')}")
 
-print("\n--- Testing UNION Attack ---")
-stolen_data = search_product_secure("' UNION SELECT id, username, password, role FROM users--")
-if len(stolen_data) > 0:
-    print(f"Found {len(stolen_data)} items.")
-else:
-    print("Result: No products found. The attack was blocked.")
+# Test 2: Password too short
+print(f"Test 2 (Short Pass): {login_safe('admin', 'ab')}")
+
+# Test 3: Space in username
+print(f"Test 3 (Spaces): {login_safe('ad min', 'pass123')}")
