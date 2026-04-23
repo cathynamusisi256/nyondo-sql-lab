@@ -94,3 +94,9 @@ cursor.execute("SELECT * FROM products WHERE id = 1")
 print("Updated record:", cursor.fetchone())
 
 conn.close()
+
+task3: Attack Explanations
+Attack1: This worked because the ' OR 1=1-- payload makes WHERE clause always true, forcing the database to return every single row in the table.
+Attack2: this worked because the --character act as comment in SQL  which tells the database to ignore the password check entirely.
+Attack3: this worked because 'OR '1'='1' creates a condition that is always true, allowing me to log in as the first user in the database ithout a valid password.
+Attack 4: this is worked because the union commmand allowed me to append results from the users table to the products search results, exposing all usernames and passwords
