@@ -100,3 +100,29 @@ Attack1: This worked because the ' OR 1=1-- payload makes WHERE clause always tr
 Attack2: this worked because the --character act as comment in SQL  which tells the database to ignore the password check entirely.
 Attack3: this worked because 'OR '1'='1' creates a condition that is always true, allowing me to log in as the first user in the database ithout a valid password.
 Attack 4: this is worked because the union commmand allowed me to append results from the users table to the products search results, exposing all usernames and passwords
+
+task4: fix the vulnerabilities
+
+def search_product_secure(name):
+    conn = sqlite3.connect('nyondo_stock.db')
+    # FIX: Use '?' placeholder instead of f-strings
+    query = "SELECT * FROM products WHERE name LIKE ?"
+    params = (f'%{name}%',)
+    
+    print(f"Executing secure query for: {name}")
+    rows = conn.execute(query, params).fetchall()
+    conn.close()
+    return rows
+
+def login_secure(username, password):
+    conn = sqlite3.connect('nyondo_stock.db')
+    # FIX: Use '?' placeholders for both username and password
+    query = "SELECT * FROM users WHERE username = ? AND password = ?"
+    params = (username, password)
+    
+    print(f"Executing secure login for: {username}")
+    user = conn.execute(query, params).fetchone()
+    conn.close()
+    return user
+    
+Explanation: Parameter queries prevent SQL injection because the database treats user input strictly as data, not as executable code.
